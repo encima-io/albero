@@ -2,11 +2,10 @@ language: php
 
 php:
   - 7.4
-  - hhvm
 
 before_script:
   - travis_retry composer self-update
   - travis_retry composer install --no-interaction --prefer-source --dev
 
 script:
-  - vendor/bin/phpunit --verbose
+  - vendor/phpunit/phpunit/phpunit tests/Unit --verbose
