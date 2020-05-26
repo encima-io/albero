@@ -35,7 +35,7 @@ trait HasNestedSets
     /** @var string|null */
     protected $orderColumn = null;
 
-    /** @var int|string|null */
+    /** @var int|string|bool|null */
     protected static $moveToNewParentId = null;
 
     protected array $scoped = [];
@@ -170,6 +170,23 @@ trait HasNestedSets
      * @return \Illuminate\Database\Connection
      */
     abstract public function getConnection();
+
+
+    /**
+     * Get the value of the model's primary key.
+     *
+     * @return mixed
+     */
+    abstract public function getKey()
+
+
+    /**
+     * Get the primary key for the model.
+     *
+     * @return string
+     */
+    abstract public function getKeyName();
+
 
     /**
     * Get the parent column name.
@@ -387,9 +404,9 @@ trait HasNestedSets
      * @param  bool  $excludeDeleted
      * @return \Illuminate\Database\Eloquent\Builder|static
      */
-    public function newNestedSetQuery($excludeDeleted = true): Builder
+    public function newNestedSetQuery(): Builder
     {
-        $builder = $this->newQuery($excludeDeleted)->orderBy($this->getQualifiedOrderColumnName());
+        $builder = $this->newQuery()->orderBy($this->getQualifiedOrderColumnName());
 
         if ($this->isScoped()) {
             foreach ($this->scoped as $scopeFld) {
@@ -905,7 +922,7 @@ trait HasNestedSets
     /**
      * Returns true if node is a descendant.
      *
-     * @param NestedSet
+     * @param \Illuminate\Database\Eloquent\Model
      * @return boolean
      */
     public function isDescendantOf($other): bool
@@ -920,7 +937,7 @@ trait HasNestedSets
     /**
      * Returns true if node is self or a descendant.
      *
-     * @param NestedSet
+     * @param \Illuminate\Database\Eloquent\Model
      * @return boolean
      */
     public function isSelfOrDescendantOf($other): bool
@@ -935,7 +952,7 @@ trait HasNestedSets
     /**
      * Returns true if node is an ancestor.
      *
-     * @param NestedSet
+     * @param \Illuminate\Database\Eloquent\Model
      * @return boolean
      */
     public function isAncestorOf($other): bool
@@ -950,7 +967,7 @@ trait HasNestedSets
     /**
      * Returns true if node is self or an ancestor.
      *
-     * @param NestedSet
+     * @param \Illuminate\Database\Eloquent\Model
      * @return boolean
      */
     public function isSelfOrAncestorOf($other): bool
@@ -965,7 +982,7 @@ trait HasNestedSets
     /**
      * Returns the first sibling to the left.
      *
-     * @return NestedSet
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function getLeftSibling(): ?Model
     {
@@ -979,7 +996,7 @@ trait HasNestedSets
     /**
      * Returns the first sibling to the right.
      *
-     * @return NestedSet
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function getRightSibling(): ?Model
     {
@@ -1374,7 +1391,7 @@ trait HasNestedSets
      * Main move method. Here we handle all node movements with the corresponding
      * lft/rgt index updates.
      *
-     * @param Baum\Node|int $target
+     * @param \Illuminate\Database\Eloquent\Model|int $target
      * @param string        $position
      * @return \Illuminate\Database\Eloquent\Model
      */
@@ -1485,7 +1502,7 @@ trait HasNestedSets
     /**
      * Get a new query builder instance for the connection.
      *
-     * @return \Baum\Extensions\Query\Builder
+     * @return \Encima\Albero\Extensions\Query\Builder
      */
     protected function newBaseQueryBuilder(): QueryBuilder
     {
