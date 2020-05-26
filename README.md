@@ -1,10 +1,11 @@
 # Albero
-
-[![Build Status](https://travis-ci.org/etrepat/baum.png?branch=master)](https://travis-ci.org/etrepat/baum)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/encima-io/albero.svg)](https://packagist.org/packages/encima-io/albero)
+[![License](https://img.shields.io/packagist/l/encima-io/albero.svg)](https://packagist.org/packages/encima-io/albero)
+[![Total Downloads](https://img.shields.io/packagist/dt/encima-io/albero.svg)](https://packagist.org/packages/encima-io/albero)
 
 Albero is an implementation of the [Nested Set](http://en.wikipedia.org/wiki/Nested_set_model) pattern for [Laravel 7's](http://laravel.com/) Eloquent ORM.
 
-Albero is basically an updated version of the [Baum package](https://github.com/etrepat/baum) which haven't been updated the last five years!
+Albero is basically an updated version of the popular [Baum package](https://github.com/etrepat/baum) which haven't been updated the last five years!
 
 ## Documentation
 * [Changes from Baum](#changes)
@@ -18,6 +19,8 @@ Albero is basically an updated version of the [Baum package](https://github.com/
 * [Getting started](#getting-started)
 * [Usage](#usage)
 * [Contributing](#contributing)
+* [License](#license)
+* [Encima](#about)
 
 <a name="changes"></a>
 ## Changes from Baum
@@ -49,20 +52,33 @@ You might want to put the columns in the guarded property if you are using Larav
 
 ```
 /** @var array */
-protected $guarded = ['id', 'parent_id', 'left', 'rigt', 'depth'];
+protected $guarded = ['id', 'parent_id', 'left', 'right', 'depth'];
 ```
 
 <a name="note"></a>
 ## Notes
-If your model uses SoftDeletes and is also extending another Eloquent model, then you might experience that  the restoring and restored event doesn't get fired, so you will need to add this to the boot method.
-```
-    static::restoring(function ($node) {
-        $node->shiftSiblingsForRestore();
-    });
+If your model uses SoftDeletes and is also extending another Eloquent model, then you might experience that  the restoring and restored event doesn't get fired, so you will need to add two listeners to the boot method.
 
-    static::restored(function ($node) {
-        $node->restoreDescendants();
-    });
+```php
+use Encima\Albero\HasNestedSets;
+use Encima\Albero\Models\Category;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class SoftCategory extends Category
+{
+    use SoftDeletes, HasNestedSets;
+
+    public static function boot() {
+        parent::boot();
+        static::restoring(function ($node) {
+            $node->shiftSiblingsForRestore();
+        });
+
+        static::restored(function ($node) {
+            $node->restoreDescendants();
+        });
+    }
+}
 ```
 
 <a name="about"></a>
@@ -146,7 +162,7 @@ ordinary trees are suddenly quite fast. Nifty, isn't it?
 Baum works with Laravel 6 and 7.
 
 ```
-composer require "encima-io/albero:~1.0"
+composer require encima-io/albero
 ```
 
 <a name="getting-started"></a>
@@ -830,6 +846,7 @@ Thinking of contributing? Maybe you've found some nasty bug? That's great news!
 
 Please see the [CONTRIBUTING.md](https://github.com/encima-io/albero/blob/master/CONTRIBUTING.md) file for extended guidelines and/or recommendations.
 
+<a name="license"></a>
 ## License
 
 Baum is licensed under the terms of the [MIT License](http://opensource.org/licenses/MIT)
@@ -838,3 +855,7 @@ Baum is licensed under the terms of the [MIT License](http://opensource.org/lice
 ---
 
 Coded by [Estanislau Trepat (etrepat)](http://etrepat.com) and updated by [Einar Hansen](https://e2consult.no).
+
+<a name="about"></a>
+## About Encima
+Encima, formerly E2Consult, is a webdevelopment team based in Oslo, Norway. You'll find more information about us [on our website](https://e2consult.no).
