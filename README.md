@@ -1,5 +1,5 @@
 # Albero
-[![Build Status](https://travis-ci.org/encima-io/albero.svg?branch=master)](https://travis-ci.org/encima-io/albero)
+[![Build Status](https://scrutinizer-ci.com/g/encima-io/albero/badges/build.png?b=master)](https://scrutinizer-ci.com/g/encima-io/albero/build-status/master)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/encima-io/albero.svg)](https://packagist.org/packages/encima-io/albero)
 [![License](https://img.shields.io/packagist/l/encima-io/albero.svg)](https://packagist.org/packages/encima-io/albero)
 [![Total Downloads](https://img.shields.io/packagist/dt/encima-io/albero.svg)](https://packagist.org/packages/encima-io/albero)

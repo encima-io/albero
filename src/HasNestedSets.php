@@ -35,7 +35,7 @@ trait HasNestedSets
     /** @var string|null */
     protected $orderColumn = null;
 
-    /** @var int|null */
+    /** @var int|string|null */
     protected static $moveToNewParentId = null;
 
     protected array $scoped = [];
@@ -103,6 +103,73 @@ trait HasNestedSets
             });
         }
     }
+
+    /**
+     * Get the table associated with the model.
+     *
+     * @return string
+     */
+    abstract public function getTable();
+
+    /**
+     * Get an attribute from the model.
+     *
+     * @param  string  $key
+     * @return mixed
+     */
+    abstract public function getAttribute($key);
+
+    /**
+     * Set a given attribute on the model.
+     *
+     * @param  string  $key
+     * @param  mixed  $value
+     * @return mixed
+     */
+    abstract public function setAttribute($key, $value);
+
+    /**
+     * Determine if the model or any of the given attribute(s) have been modified.
+     *
+     * @param  array|string|null  $attributes
+     * @return bool
+     */
+    abstract public function isDirty($attributes = null);
+
+    /**
+    * Define an inverse one-to-one or many relationship.
+    *
+    * @param  string  $related
+    * @param  string|null  $foreignKey
+    * @param  string|null  $ownerKey
+    * @param  string|null  $relation
+    * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+    */
+    abstract public function belongsTo($related, $foreignKey = null, $ownerKey = null, $relation = null);
+
+    /**
+     * Define a one-to-many relationship.
+     *
+     * @param  string  $related
+     * @param  string|null  $foreignKey
+     * @param  string|null  $localKey
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    abstract public function hasMany($related, $foreignKey = null, $localKey = null);
+
+    /**
+     * Get a new query builder for the model's table.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    abstract public function newQuery();
+
+    /**
+     * Get the database connection for the model.
+     *
+     * @return \Illuminate\Database\Connection
+     */
+    abstract public function getConnection();
 
     /**
     * Get the parent column name.
@@ -337,7 +404,7 @@ trait HasNestedSets
      * Overload new Collection
      *
      * @param array $models
-     * @return \Baum\Extensions\Eloquent\Collection
+     * @return \Encima\Albero\Extensions\Eloquent\Collection
      */
     public function newCollection(array $models = []): Collection
     {
@@ -348,7 +415,7 @@ trait HasNestedSets
      * Get all of the nodes from the database.
      *
      * @param  array  $columns
-     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     * @return \Encima\Albero\Extensions\Eloquent\Collection|static[]
      */
     public static function all($columns = ['*']): Collection
     {
@@ -356,7 +423,7 @@ trait HasNestedSets
 
         return $instance->newQuery()
                     ->orderBy($instance->getQualifiedOrderColumnName())
-                    ->get();
+                    ->get($columns);
     }
 
     /**
@@ -551,7 +618,7 @@ trait HasNestedSets
     /**
      * Returns the root node starting at the current node.
      *
-     * @return NestedSet
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function getRoot(): Model
     {
@@ -924,7 +991,7 @@ trait HasNestedSets
     /**
      * Find the left sibling and move to left of it.
      *
-     * @return \Baum\Node
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function moveLeft(): Model
     {
@@ -934,7 +1001,7 @@ trait HasNestedSets
     /**
      * Find the right sibling and move to the right of it.
      *
-     * @return \Baum\Node
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function moveRight(): Model
     {
@@ -944,7 +1011,7 @@ trait HasNestedSets
     /**
      * Move to the node to the left of ...
      *
-     * @return \Baum\Node
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function moveToLeftOf($node): Model
     {
@@ -954,7 +1021,7 @@ trait HasNestedSets
     /**
      * Move to the node to the right of ...
      *
-     * @return \Baum\Node
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function moveToRightOf($node): Model
     {
@@ -964,7 +1031,7 @@ trait HasNestedSets
     /**
      * Alias for moveToRightOf
      *
-     * @return \Baum\Node
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function makeNextSiblingOf($node): Model
     {
@@ -974,7 +1041,7 @@ trait HasNestedSets
     /**
      * Alias for moveToRightOf
      *
-     * @return \Baum\Node
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function makeSiblingOf($node): Model
     {
@@ -984,7 +1051,7 @@ trait HasNestedSets
     /**
      * Alias for moveToLeftOf
      *
-     * @return \Baum\Node
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function makePreviousSiblingOf($node): Model
     {
@@ -994,7 +1061,7 @@ trait HasNestedSets
     /**
      * Make the node a child of ...
      *
-     * @return \Baum\Node
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function makeChildOf($node): self
     {
@@ -1004,7 +1071,7 @@ trait HasNestedSets
     /**
      * Make the node the first child of ...
      *
-     * @return \Baum\Node
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function makeFirstChildOf($node): Model
     {
@@ -1018,7 +1085,7 @@ trait HasNestedSets
     /**
      * Make the node the last child of ...
      *
-     * @return \Baum\Node
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function makeLastChildOf($node): Model
     {
@@ -1028,7 +1095,7 @@ trait HasNestedSets
     /**
      * Make current node a root node.
      *
-     * @return \Baum\Node
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function makeRoot(): Model
     {
@@ -1038,7 +1105,7 @@ trait HasNestedSets
     /**
      * Equals?
      *
-     * @param \Baum\Node
+     * @param \Illuminate\Database\Eloquent\Model
      * @return boolean
      */
     public function equals($node): bool
@@ -1049,7 +1116,7 @@ trait HasNestedSets
     /**
      * Checkes if the given node is in the same scope as the current one.
      *
-     * @param \Baum\Node
+     * @param \Illuminate\Database\Eloquent\Model
      * @return boolean
      */
     public function inSameScope($other): bool
@@ -1067,7 +1134,7 @@ trait HasNestedSets
      * Checks wether the given node is a descendant of itself. Basically, whether
      * its in the subtree defined by the left and right indices.
      *
-     * @param \Baum\Node
+     * @param \Illuminate\Database\Eloquent\Model
      * @return boolean
      */
     public function insideSubtree($node): bool
@@ -1132,7 +1199,7 @@ trait HasNestedSets
     /**
      * Sets the depth attribute
      *
-     * @return \Baum\Node
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function setDepth(): Model
     {
@@ -1153,7 +1220,7 @@ trait HasNestedSets
     /**
      * Sets the depth attribute for the current node and all of its descendants.
      *
-     * @return \Baum\Node
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function setDepthWithSubtree(): Model
     {
@@ -1309,7 +1376,7 @@ trait HasNestedSets
      *
      * @param Baum\Node|int $target
      * @param string        $position
-     * @return \Baum\Node
+     * @return \Illuminate\Database\Eloquent\Model
      */
     protected function moveTo($target, $position): self
     {
@@ -1354,12 +1421,12 @@ trait HasNestedSets
     }
 
     /**
-         * Reloads the model from the database.
-         *
-         * @return \Baum\Node
-         *
-         * @throws ModelNotFoundException
-         */
+     * Reloads the model from the database.
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     *
+     * @throws ModelNotFoundException
+     */
     public function reload(): Model
     {
         if ($this->exists || ($this->areSoftDeletesEnabled() && $this->trashed())) {
@@ -1432,7 +1499,7 @@ trait HasNestedSets
     /**
      * Returns a fresh instance from the database.
      *
-     * @return \Baum\Node
+     * @return \Illuminate\Database\Eloquent\Model
      */
     protected function getFreshInstance(): ?Model
     {

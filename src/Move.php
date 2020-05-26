@@ -34,8 +34,8 @@ class Move
     /**
      * Create a new Move class instance.
      *
-     * @param   \Baum\Node      $node
-     * @param   \Baum\Node|int  $target
+     * @param   \Illuminate\Database\Eloquent\Model      $node
+     * @param   \Illuminate\Database\Eloquent\Model|int  $target
      * @param   string          $position
      * @return  void
      */
@@ -50,8 +50,8 @@ class Move
     /**
      * Easy static accessor for performing a move operation.
      *
-     * @param   \Baum\Node      $node
-     * @param   \Baum\Node|int  $target
+     * @param   \Illuminate\Database\Eloquent\Model      $node
+     * @param   \Illuminate\Database\Eloquent\Model|int  $target
      * @param   string          $position
      * @return \Illuminate\Database\Eloquent\Model
      */
@@ -155,11 +155,11 @@ class Move
 
     /**
      * Resolves suplied node. Basically returns the node unchanged if
-     * supplied parameter is an instance of \Baum\Node. Otherwise it will try
+     * supplied parameter is an instance of \Illuminate\Database\Eloquent\Model. Otherwise it will try
      * to find the node in the database.
      *
-     * @param   \Baum\node|int
-     * @return  \Baum\Node
+     * @param   \Illuminate\Database\Eloquent\Model|int
+     * @return  \Illuminate\Database\Eloquent\Model
      */
     protected function resolveNode($node): ?Model
     {
@@ -329,7 +329,7 @@ class Move
     /**
      * Get the event dispatcher instance.
      *
-     * @return \Illuminate\Events\Dispatcher
+     * @return \Illuminate\Contracts\Events\Dispatcher
      */
     public static function getEventDispatcher(): Dispatcher
     {
@@ -376,7 +376,7 @@ class Move
      * @param mixed $value
      * @return string
      */
-    protected function quoteIdentifier(?string $value): string
+    protected function quoteIdentifier($value): string
     {
         if (is_null($value)) {
             return 'NULL';
