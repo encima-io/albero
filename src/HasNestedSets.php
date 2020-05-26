@@ -171,14 +171,12 @@ trait HasNestedSets
      */
     abstract public function getConnection();
 
-
     /**
      * Get the value of the model's primary key.
      *
      * @return mixed
      */
-    abstract public function getKey()
-
+    abstract public function getKey();
 
     /**
      * Get the primary key for the model.
@@ -186,7 +184,6 @@ trait HasNestedSets
      * @return string
      */
     abstract public function getKeyName();
-
 
     /**
     * Get the parent column name.
